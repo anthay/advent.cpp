@@ -26,8 +26,4 @@ advent
 
 ### A map of Colossal Cave
 
-I made a map of the cave to help me test it. Obviously, it contains spoilers. (I used Flowchart Designer 3 by Guangjian Zhang.)
-
-![A flowchart-style map of all the locations in Will Crowther's Colossal Cave Adventure.](https://github.com/anthay/Adventure/blob/master/doc/ColossalCaveMap.png)
-
-
+I made a [map](https://github.com/anthay/Adventure/blob/master/doc/ColossalCaveMap.png) of the cave to help me test it. Obviously, it contains spoilers. (I used Flowchart Designer 3 by Guangjian Zhang.)
