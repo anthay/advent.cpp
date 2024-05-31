@@ -335,7 +335,7 @@ void pause(advent_io & io, const char * msg)
          digits, if any, to be typed on the user's teletypewriter. Program
          execution may be resumed (at the next executable FORTRAN statement)
          from the console by typing "G," followed by a carriage return.
-         Program execution may be terminated by typing "X, 11 followed by
+         Program execution may be terminated by typing "X," followed by
          carriage return."
          -- DEC-10-AFDO-D decsystem10 FORTRAN IV Programmer's Reference Manual
             dated 1967-1972
