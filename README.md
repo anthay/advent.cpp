@@ -6,7 +6,7 @@ Here is an example play...
 
 ```text
 -----------------------------------------------------------------
-     Will Crowther's original 1977 "Colossal Cave Adventure"
+     Will Crowther's original 1976 "Colossal Cave Adventure"
                A faithful reimplementation in C++
          by Anthony Hay, 2024  (CC0 1.0) Public Domain
               https://github.com/anthay/Adventure
