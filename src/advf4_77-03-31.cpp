@@ -2611,7 +2611,7 @@ int main()
 {
     std::cout
         << "-----------------------------------------------------------------\n"
-        << "     Will Crowther's original 1977 \"Colossal Cave Adventure\"\n"
+        << "     Will Crowther's original 1976 \"Colossal Cave Adventure\"\n"
         << "               A faithful reimplementation in C++\n"
         << "         by Anthony Hay, 2024  (CC0 1.0) Public Domain\n"
         << "              https://github.com/anthay/Adventure\n"
