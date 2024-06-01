@@ -328,7 +328,7 @@ void type_20a5(
 }
 
 
-// Display the PAUSE text and wait for the user to type 'go'.
+// Display the PAUSE text and wait for the user to type g or x.
 void pause(advent_io & io, const char * msg)
 {
     /*  "Execution of the PAUSE statement causes the message or the octal
@@ -341,22 +341,35 @@ void pause(advent_io & io, const char * msg)
             dated 1967-1972
 
         I don't know exactly what the user would see. Just the PAUSE text?
-        I got the following text from the SunSoft FORTRAN 77 4.0 Reference Manual.
+        The SunSoft FORTRAN 77 4.0 Reference Manual gives this example:
+
+            PAUSE: 1
+            To resume execution, type: go
+            Any other input will terminate the program.
+            go
+            Execution resumed after PAUSE.
+
+        I've combined these two into the following:
     */
     io.type("PAUSE: ");
     io.type(msg);
-    io.type("\nTO RESUME EXECUTION, TYPE: GO\n"
-            "ANY OTHER INPUT WILL TERMINATE THE PROGRAM.\n");
+    io.type("\n");
 
-    if (to_upper(io.getline()) == "GO") {
-        io.type("\n");
-        return;
+    for (;;) {
+        io.type("TO RESUME EXECUTION, TYPE: G\n"
+                "TO TERMINATE THE PROGRAM, TYPE: X\n");
+        const auto input{to_upper(io.getline())};
+        if (input == "G") {
+            io.type("EXECUTION RESUMED\n\n");
+            break;
+        }
+        if (input == "X")
+            throw adventure_pause_exception();
     }
-    throw adventure_pause_exception();
 };
 
 
-// "The ACCEPT statement reads from standard input." -- FORTRAN 4
+// "The ACCEPT statement reads from standard input." -- FORTRAN IV
 // In Adventure, ACCEPT is used in only one place with a format specifier
 // of "4A5", i.e. 4 ints each holding 5 characters.
 void accept_4A5(advent_io & io, std::array<uint_least64_t, 6> & a)
@@ -511,6 +524,55 @@ L4: d = a[2];                                       // 4       D=A(2)
                                                     //         RETURN
 };                                                  //         END
 
+DEF_TEST_FUNC(getin)
+{
+    class advent_io_getin_test : public scaffolding::advent_io {
+        std::string line_;
+    public:
+        explicit advent_io_getin_test(const std::string & line) : line_(line) {}
+        virtual ~advent_io_getin_test() {}
+        std::string getline() override { return line_; }
+        void type(const std::string & msg) override {}
+        void type(int n) override {}
+    };
+
+    {
+        advent_io_getin_test io("xyzzy");
+        uint_least64_t twow{99}, b{99}, c{99}, d{99};
+        getin(io, twow, b, c, d);
+        TEST_EQUAL(twow, 0);
+        TEST_EQUAL(b, scaffolding::as_a5("XYZZY"));
+        TEST_EQUAL(c, 99);
+        TEST_EQUAL(d, scaffolding::as_a5("     "));
+    }
+    {
+        advent_io_getin_test io("Supercalifragilisticexpialidocious          ");
+        uint_least64_t twow{99}, b{99}, c{99}, d{99};
+        getin(io, twow, b, c, d);
+        TEST_EQUAL(twow, 0);
+        TEST_EQUAL(b, scaffolding::as_a5("SUPER"));
+        TEST_EQUAL(c, 99);
+        TEST_EQUAL(d, scaffolding::as_a5("CALIF"));
+    }
+    {
+        advent_io_getin_test io("go           west");
+        uint_least64_t twow{99}, b{99}, c{99}, d{99};
+        getin(io, twow, b, c, d);
+        TEST_EQUAL(twow, 1);
+        TEST_EQUAL(b, scaffolding::as_a5("GO   "));
+        TEST_EQUAL(c, scaffolding::as_a5("WEST "));
+        TEST_EQUAL(d, scaffolding::as_a5("     "));
+    }
+    {
+        advent_io_getin_test io("WHO ARE YOU");
+        uint_least64_t twow{99}, b{99}, c{99}, d{99};
+        getin(io, twow, b, c, d);
+        TEST_EQUAL(twow, 1);
+        TEST_EQUAL(b, scaffolding::as_a5("WHO  "));
+        TEST_EQUAL(c, scaffolding::as_a5("ARE Y"));
+        TEST_EQUAL(d, scaffolding::as_a5("RE YO"));
+    }
+}
 
 
                                                     //         SUBROUTINE SPEAK(IT)
@@ -683,27 +745,28 @@ void adventure(
     // [SETUP is not explicitly initialised prior to the IF. Presumably the PDP-10
     // FORTRAN system could be relied upon to zero-initialise variables? Anyway,
     // how could execution return to this point to ask whether SETUP was non-zero?]
-    constexpr int keys   = 1;                       //         KEYS=1
-    constexpr int lamp   = 2;                       //         LAMP=2
-    constexpr int grate  = 3;                       //         GRATE=3
-    // [4: cage]
-    constexpr int rod    = 5;                       //         ROD=5
-    // [6: steps]
-    constexpr int bird   = 7;                       //         BIRD=7
-    constexpr int nugget = 10;                      //         NUGGET=10
-    constexpr int snake  = 11;                      //         SNAKE=11
-    // [12: fissure]
-    // [13: diamonds]
-    // [14: silver]
-    // [15: jewels]
-    // [16: coins]
-    // [17: dwarves]
-    // [18: knife/rock]
-    constexpr int food   = 19;                      //         FOOD=19
-    constexpr int water  = 20;                      //         WATER=20
-    constexpr int axe    = 21;                      //         AXE=21
-    // [22: knife]
-    // [23: chest]
+
+    constexpr int keys      = 1;                    //         KEYS=1
+    constexpr int lamp      = 2;                    //         LAMP=2
+    constexpr int grate     = 3;                    //         GRATE=3
+    //           [cage      = 4]
+    constexpr int rod       = 5;                    //         ROD=5
+    //           [steps     = 6]
+    constexpr int bird      = 7;                    //         BIRD=7
+    constexpr int nugget    = 10;                   //         NUGGET=10
+    constexpr int snake     = 11;                   //         SNAKE=11
+    //           [fissure   = 12]
+    //           [diamonds  = 13]
+    //           [silver    = 14]
+    //           [jewels    = 15]
+    //           [coins     = 16]
+    //           [dwarves   = 17]
+    //           [knife/rock = 18]
+    constexpr int food      = 19;                   //         FOOD=19
+    constexpr int water     = 20;                   //         WATER=20
+    constexpr int axe       = 21;                   //         AXE=21
+    //           [knife     = 22]
+    //           [chest     = 23]
                                                     //         DATA(JSPKT(I),I=1,16)/24,29,0,31,0,31,38,38,42,42,43,46,77,71
                                                     //       1 ,73,75/
     std::array<int, 101> jspkt = {
@@ -1435,7 +1498,7 @@ L5107:if (jverb == 4) goto L5033;                   // 5107    IF(JVERB.EQ.4) GO
     speak(34);                                      //         CALL SPEAK(34)
     goto L2011;                                     //         GOTO 2011
 L5034:speak(35); // [35:"THE GRATE IS NOW LOCKED."] // 5034    CALL SPEAK(35)
-    prop[grate] = 0;                                //         PROP(GRATE)=0
+    prop[grate] = 0; // [0 means locked]            //         PROP(GRATE)=0
     prop[8] = 0;                                    //         PROP(8)=0
     goto L2011;                                     //         GOTO 2011
 L5033:if (prop[grate] == 0) goto L5109;             // 5033    IF(PROP(GRATE).EQ.0)GOTO 5109
@@ -1444,7 +1507,7 @@ L5033:if (prop[grate] == 0) goto L5109;             // 5033    IF(PROP(GRATE).EQ
     goto L2011;                                     //         GOTO 2011
     // [37:"THE GRATE IS NOW UNLOCKED."]
 L5109:speak(37);                                    // 5109    CALL SPEAK(37)
-    prop[grate] = 1;                                //         PROP(GRATE)=1
+    prop[grate] = 1; // [1 means unlocked]          //         PROP(GRATE)=1
     prop[8] = 1;                                    //         PROP(8)=1
     goto L2011;                                     //         GOTO 2011
                                                     // 
@@ -2375,7 +2438,7 @@ DEF_TEST_FUNC(adventure)
     try {
         // Don't go south from the Swiss cheese room!
         const std::vector<std::tuple<std::string, int, double>> swiss_cheese_bug = {
-            {"go",           0,     -1.0},
+            {"g",            0,     -1.0},
             {"no",           1,     -1.0},
             {"in",           3,     -1.0},
             {"get lamp",     0,     -1.0},
@@ -2409,7 +2472,7 @@ DEF_TEST_FUNC(adventure)
     try {
         // Don't go into the pit holding gold!
         const std::vector<std::tuple<std::string, int, double>> infinite_loop_bug = {
-            {"go",           0,     -1.0},
+            {"g",            0,     -1.0},
             {"no",           1,     -1.0},
             {"in",           3,     -1.0},
             {"get lamp",     0,     -1.0},
@@ -2440,7 +2503,7 @@ DEF_TEST_FUNC(adventure)
     try {
         // How many locations can we visit?
         const std::vector<std::tuple<std::string, int, double>> walkabout = {
-            {"go",           0,     -1.0},
+            {"g",            0,     -1.0},
             {"no",           1,     -1.0},
             {"west",         2,     -1.0},
             {"east",         1,     -1.0},
