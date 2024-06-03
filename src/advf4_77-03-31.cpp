@@ -1498,7 +1498,7 @@ L5107:if (jverb == 4) goto L5033;                   // 5107    IF(JVERB.EQ.4) GO
     speak(34);                                      //         CALL SPEAK(34)
     goto L2011;                                     //         GOTO 2011
 L5034:speak(35); // [35:"THE GRATE IS NOW LOCKED."] // 5034    CALL SPEAK(35)
-    prop[grate] = 0; // [0 means locked]            //         PROP(GRATE)=0
+    prop[grate] = 0; // [0 means locked!]           //         PROP(GRATE)=0
     prop[8] = 0;                                    //         PROP(8)=0
     goto L2011;                                     //         GOTO 2011
 L5033:if (prop[grate] == 0) goto L5109;             // 5033    IF(PROP(GRATE).EQ.0)GOTO 5109
@@ -2352,8 +2352,11 @@ DEF_TEST_FUNC(adventure)
 
     class advent_io_test_stream : public scaffolding::advent_io {
     public:
-        advent_io_test_stream(const std::vector<std::tuple<std::string, int, double>> & texts)
-            : texts_(texts) {}
+        advent_io_test_stream(
+            const std::vector<std::tuple<std::string, int, double>> & texts,
+            bool show_test_output)
+        : texts_(texts), show_test_output_(show_test_output) {}
+
         ~advent_io_test_stream() {}
 
         std::string getline() override
@@ -2363,9 +2366,8 @@ DEF_TEST_FUNC(adventure)
 
             auto [command, expected_location, random_value] = texts_.at(index_);
 
-#ifdef SHOW_TEST_OUTPUT
-            std::cout << "\n>" << command << "\n\n";
-#endif
+            if (show_test_output_)
+                std::cout << "\n>" << command << "\n\n";
 
             std::string buf;
 
@@ -2389,19 +2391,23 @@ DEF_TEST_FUNC(adventure)
         }
 
 
-#ifdef SHOW_TEST_OUTPUT
-        void type(const std::string & msg) override { std::cout << msg; }
-        void type(int n) override { std::cout << n; }
-#else
-        void type(const std::string &) override {}
-        void type(int) override {}
-#endif
+        void type(const std::string & msg) override
+        {
+            if (show_test_output_)
+                std::cout << msg;
+        }
+
+        void type(int n) override
+        {
+            if (show_test_output_)
+                std::cout << n;
+        }
 
         void trace_location(int loc) override
         {
-#ifdef SHOW_TEST_OUTPUT
-            std::cout << "<" << loc << ">\n";
-#endif
+            if (show_test_output_)
+                std::cout << "<" << loc << ">\n";
+
             TEST_EQUAL(expected_location_.empty(), false);
             if (!expected_location_.empty()) {
                 TEST_EQUAL(loc, expected_location_.front());
@@ -2409,14 +2415,11 @@ DEF_TEST_FUNC(adventure)
             }
         }
 
-#ifdef SHOW_TEST_OUTPUT
         double ran(int call_site) override
         {
-            std::cout << "ran(" << call_site << ")\n";
-#else
-        double ran(int) override
-        {
-#endif
+            if (show_test_output_)
+                std::cout << "ran(" << call_site << ")\n";
+
             TEST_EQUAL(random_value_.empty(), false);
             if (random_value_.empty())
                 return 0.5;
@@ -2432,8 +2435,11 @@ DEF_TEST_FUNC(adventure)
         unsigned index_ = 0;
         std::deque<int> expected_location_;
         std::deque<double> random_value_;
+        bool show_test_output_ = true;
     };
 
+
+    constexpr bool show_test_output = false;
 
     try {
         // Don't go south from the Swiss cheese room!
@@ -2462,7 +2468,7 @@ DEF_TEST_FUNC(adventure)
             {"",             0,      0.1},
             {"<stop>",       0,     -1.0},
         };
-        advent_io_test_stream io(swiss_cheese_bug);
+        advent_io_test_stream io(swiss_cheese_bug, show_test_output);
         std::istringstream iss(Crowther::advdat_77_03_31);
         Crowther::adventure<std::istringstream>(iss, io);
     }
@@ -2493,7 +2499,7 @@ DEF_TEST_FUNC(adventure)
             {"",            26,     -1.0},  //    followed by "I DON'T UNDERSTAND THAT!" recurring; see L25 comment
             {"<stop>",       0,     -1.0},
         };
-        advent_io_test_stream io(infinite_loop_bug);
+        advent_io_test_stream io(infinite_loop_bug, show_test_output);
         std::istringstream iss(Crowther::advdat_77_03_31);
         Crowther::adventure<std::istringstream>(iss, io);
     }
@@ -2661,7 +2667,7 @@ DEF_TEST_FUNC(adventure)
 
             {"<stop>",       0,     -1.0},
         };
-        advent_io_test_stream io(walkabout);
+        advent_io_test_stream io(walkabout, show_test_output);
         std::istringstream iss(Crowther::advdat_77_03_31);
         Crowther::adventure<std::istringstream>(iss, io);
     }
