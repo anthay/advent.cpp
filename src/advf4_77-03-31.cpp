@@ -51,15 +51,19 @@
 
 
 
-/****************************************************************************
-
-    Micro Test Library
-
-****************************************************************************/
+/*
+    ######## ########  ######  ########    ##       #### ########  
+       ##    ##       ##    ##    ##       ##        ##  ##     ## 
+       ##    ##       ##          ##       ##        ##  ##     ## 
+       ##    ######    ######     ##       ##        ##  ########  
+       ##    ##             ##    ##       ##        ##  ##     ## 
+       ##    ##       ##    ##    ##       ##        ##  ##     ## 
+       ##    ########  ######     ##       ######## #### ########  
+*/
 
 namespace micro_test_library {
 
-/*  Define test functions with DEF_TEST_FUNC(test_func).
+/*  Define test functions with DEF_TEST_FUNC(function_name).
     Use TEST_EQUAL(value, expected_value) to test expected outcomes.
     Execute all test functions with RUN_TESTS(). */
 
@@ -100,7 +104,7 @@ void test_equal(const A & value, const B & expected_value,
     ++test_count;
     if (!(value == expected_value)) {
         ++fault_count;
-        // e.g. love.cpp(2021) : in proposal() expected 'Yes!', but got 'Hahaha'
+        // e.g. love.cpp(2021) : in proposal() expected 'Yes!', but got 'no lol'
         std::cout
             << filename << '(' << line_num
             << ") : in " << function_name
@@ -154,13 +158,21 @@ void micro_test_##test_func()
 
 
 
+
+/*
+     ######   ######     ###    ######## ########  #######  ##       ########  
+    ##    ## ##    ##   ## ##   ##       ##       ##     ## ##       ##     ## 
+    ##       ##        ##   ##  ##       ##       ##     ## ##       ##     ## 
+     ######  ##       ##     ## ######   ######   ##     ## ##       ##     ## 
+          ## ##       ######### ##       ##       ##     ## ##       ##     ## 
+    ##    ## ##    ## ##     ## ##       ##       ##     ## ##       ##     ## 
+     ######   ######  ##     ## ##       ##        #######  ######## ########  
+*/
+
 namespace scaffolding {
 
-/****************************************************************************
+// Supporting functions used to recreate some FORTRAN IV features
 
-    Supporting functions used to recreate some FORTRAN IV features
-
-****************************************************************************/
 
 struct adventure_exception : public std::runtime_error {
     adventure_exception(const char * msg) : std::runtime_error(msg) {}
@@ -172,7 +184,7 @@ struct adventure_pause_exception : public adventure_exception {
 
 
 
-// return given string s in uppercase
+// return given string in uppercase
 std::string to_upper(std::string s)
 {
     std::transform(s.begin(), s.end(), s.begin(),
@@ -230,14 +242,13 @@ DEF_TEST_FUNC(as_a5)
 }
 
 
+// Return given string as a vector of PDP-10 FORTRAN IV 36-bit integers.
 std::vector<uint_least64_t> as_a5vec(const std::string & s)
 {
     std::vector<uint_least64_t> result;
-    std::string buf{scaffolding::to_upper(s)};
-    while (!buf.empty()) {
-        result.push_back(scaffolding::as_a5(buf.substr(0, 5)));
-        buf.erase(0, 5);
-    }
+    const std::string buf{scaffolding::to_upper(s)};
+    for (unsigned i = 0; i < buf.size(); i += 5)
+        result.push_back(scaffolding::as_a5(buf.substr(i, 5)));
     return result;
 }
 
@@ -255,6 +266,7 @@ DEF_TEST_FUNC(as_a5vec)
 }
 
 
+// Return given A5 format integer as a string of 5 characters.
 std::string as_string(uint_least64_t a)
 {
     std::string result;
@@ -313,7 +325,7 @@ void advent_io::type(const std::string &) {}
 void advent_io::type(int) {}
 
 
-// output a string supplied in FORTRAN 4 (5 chars per 36-bit word) format
+// Output a string supplied in FORTRAN 4 (5 chars per 36-bit word) format.
 void type_20a5(
     advent_io & io,
     const std::array<uint_least64_t, 23> & line,
@@ -395,15 +407,20 @@ void accept_4A5(advent_io & io, std::array<uint_least64_t, 6> & a)
 
 
 
+/*
+     ######  ########   #######  ##      ## ######## ##     ## ######## ########  
+    ##    ## ##     ## ##     ## ##  ##  ##    ##    ##     ## ##       ##     ## 
+    ##       ##     ## ##     ## ##  ##  ##    ##    ##     ## ##       ##     ## 
+    ##       ########  ##     ## ##  ##  ##    ##    ######### ######   ########  
+    ##       ##   ##   ##     ## ##  ##  ##    ##    ##     ## ##       ##   ##   
+    ##    ## ##    ##  ##     ## ##  ##  ##    ##    ##     ## ##       ##    ##  
+     ######  ##     ##  #######   ###  ###     ##    ##     ## ######## ##     ## 
+*/
 
 namespace Crowther {
 
-/****************************************************************************
-
-    Original Adventure subroutines
-    (These appear after the Adventure END statement in the original code.)
-
-****************************************************************************/
+// Original Adventure subroutines
+// (These appear after the Adventure END statement in the original code.)
 
                                                     //         SUBROUTINE SHIFT (VAL,DIST,RES)
 void shift(uint_least64_t val, int dist, uint_least64_t & res)
@@ -636,13 +653,18 @@ L1: yea = 0;                                        // 1       YEA=0
 
 
 
-/****************************************************************************
+/*
+       ###    ########  ##     ## ######## ##    ## ######## ##     ## ########  ######## 
+      ## ##   ##     ## ##     ## ##       ###   ##    ##    ##     ## ##     ## ##       
+     ##   ##  ##     ## ##     ## ##       ####  ##    ##    ##     ## ##     ## ##       
+    ##     ## ##     ## ##     ## ######   ## ## ##    ##    ##     ## ########  ######   
+    ######### ##     ##  ##   ##  ##       ##  ####    ##    ##     ## ##   ##   ##       
+    ##     ## ##     ##   ## ##   ##       ##   ###    ##    ##     ## ##    ##  ##       
+    ##     ## ########     ###    ######## ##    ##    ##     #######  ##     ## ########
+*/
 
-    Adventure -- recoded in C++ as directly as seemed reasonable
-    Original source: http://www.icynic.com/~don/jerz/advf4.77-03-31
-
-****************************************************************************/
-
+// Adventure -- recoded in C++ as directly as seemed reasonable
+// (Original source: http://www.icynic.com/~don/jerz/advf4.77-03-31)
 template <typename input_stream>
 void adventure(
     input_stream & advdat,          // Adventure data file stream
@@ -1070,13 +1092,13 @@ L10:l = ll / 1024;                                  // 10      L=LL/1024
     // [12:"I DON'T KNOW HOW TO APPLY THAT WORD HERE."]
 L11:jspk = 12;                                      // 11      JSPK=12
     // [43:EAST 44:WEST 45:NORTH 46:SOUTH 29:UP 30:DOWN
-    // 9:"THERE IS NO WAY TO GO THAT DIRECTION."]
+    //  9:"THERE IS NO WAY TO GO THAT DIRECTION."]
     if (k >= 43 && k <= 46) jspk = 9;               //         IF(K.GE.43.AND.K.LE.46)JSPK=9
     if (k == 29 || k == 30) jspk = 9;               //         IF(K.EQ.29.OR.K.EQ.30)JSPK=9
                                                     //         IF(K.EQ.7.OR.K.EQ.8.OR.K.EQ.36.OR.K.EQ.37.OR.K.EQ.68)
                                                     //       1 JSPK=10
     // [7:FORWA 8:BACK 36:LEFT 37:RIGHT 68:TURN
-    // 10:"I AM UNSURE HOW YOU ARE FACING. USE COMPASS POINTS..."]
+    //  10:"I AM UNSURE HOW YOU ARE FACING. USE COMPASS POINTS..."]
     if (k == 7 || k == 8 || k == 36 || k == 37 || k == 68) jspk = 10;
     // [11:OUT 19:IN 11:"I DON'T KNOW IN FROM OUT HERE. USE COMPASS POINTS..."]
     if (k == 11 || k == 19) jspk = 11;              //         IF(K.EQ.11.OR.K.EQ.19)JSPK=11
@@ -1602,6 +1624,18 @@ L5506:if (jobj != water) jspk = 78;                 // 5506    IF(JOBJ.NE.WATER)
 }                                                   //         END
 
 
+
+
+
+/*
+       ###    ########  ##     ## ########     ###    ######## 
+      ## ##   ##     ## ##     ## ##     ##   ## ##      ##    
+     ##   ##  ##     ## ##     ## ##     ##  ##   ##     ##    
+    ##     ## ##     ## ##     ## ##     ## ##     ##    ##    
+    ######### ##     ##  ##   ##  ##     ## #########    ##    
+    ##     ## ##     ##   ## ##   ##     ## ##     ##    ##    
+    ##     ## ########     ###    ########  ##     ##    ##    
+*/
 
 // The contents of the text file http://www.icynic.com/~don/jerz/advdat.77-03-31
 const std::string advdat_77_03_31{
@@ -2339,8 +2373,6 @@ const std::string advdat_77_03_31{
     "0\n"
 };
 
-} //namespace Crowther
-
 
 
 DEF_TEST_FUNC(adventure)
@@ -2469,8 +2501,8 @@ DEF_TEST_FUNC(adventure)
             {"<stop>",       0,     -1.0},
         };
         advent_io_test_stream io(swiss_cheese_bug, show_test_output);
-        std::istringstream iss(Crowther::advdat_77_03_31);
-        Crowther::adventure<std::istringstream>(iss, io);
+        std::istringstream iss(advdat_77_03_31);
+        adventure<std::istringstream>(iss, io);
     }
     catch (const done &) {}
 
@@ -2500,8 +2532,8 @@ DEF_TEST_FUNC(adventure)
             {"<stop>",       0,     -1.0},
         };
         advent_io_test_stream io(infinite_loop_bug, show_test_output);
-        std::istringstream iss(Crowther::advdat_77_03_31);
-        Crowther::adventure<std::istringstream>(iss, io);
+        std::istringstream iss(advdat_77_03_31);
+        adventure<std::istringstream>(iss, io);
     }
     catch (const done &) {}
 
@@ -2668,11 +2700,15 @@ DEF_TEST_FUNC(adventure)
             {"<stop>",       0,     -1.0},
         };
         advent_io_test_stream io(walkabout, show_test_output);
-        std::istringstream iss(Crowther::advdat_77_03_31);
-        Crowther::adventure<std::istringstream>(iss, io);
+        std::istringstream iss(advdat_77_03_31);
+        adventure<std::istringstream>(iss, io);
     }
     catch (const done &) {}
 }
+
+} //namespace Crowther
+
+
 
 
 
