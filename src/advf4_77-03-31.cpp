@@ -965,7 +965,7 @@ L2:
 
     // [The following line is not in Crowther's code. It was added to avoid
     //  an infinite loop. See note at L25.]
-   if (l == 26) pause("GAME OVER");
+    if (l == 26) pause("GAME OVER");
 
     for (i = 1; i <= 3; ++i) {                      // 2       DO 73 I=1,3
         if (odloc[i]!=l || dseen[i]==0) continue;   //         IF(ODLOC(I).NE.L.OR.DSEEN(I).EQ.0)GOTO 73
