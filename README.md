@@ -1,6 +1,6 @@
 # advent.cpp
 
-Will Crowther created Colossal Cave Adventure in 1976 in FORTRAN IV on a PDP-10. This is a faithful recreation in C++. Here are his [code](https://github.com/anthay/Adventure/blob/main/doc/advf4.77-03-31.txt) and [data](https://github.com/anthay/Adventure/blob/main/doc/advdat.77-03-31.txt) files.
+Will Crowther created Colossal Cave Adventure in 1976 in FORTRAN IV on a PDP-10. This is a faithful recreation in C++. Here are his [code](https://github.com/anthay/advent.cpp/blob/main/doc/advf4.77-03-31.txt) and [data](https://github.com/anthay/advent.cpp/blob/main/doc/advdat.77-03-31.txt) files.
 
 Here is an example play...
 
@@ -9,7 +9,7 @@ Here is an example play...
      Will Crowther's original 1976 "Colossal Cave Adventure"
                A faithful reimplementation in C++
          by Anthony Hay, 2024  (CC0 1.0) Public Domain
-              https://github.com/anthay/Adventure
+              https://github.com/anthay/advent.cpp
 -----------------------------------------------------------------
 To quit hit Ctrl-C
 
@@ -106,13 +106,13 @@ TO TERMINATE THE PROGRAM, TYPE: X
 
 ### A map of Colossal Cave
 
-I made a [map](https://github.com/anthay/Adventure/blob/master/doc/ColossalCaveMap.png) of the cave to help me test it. Obviously, it contains spoilers. (I used Flowchart Designer 3 by Guangjian Zhang.)
+I made a [map](https://github.com/anthay/advent.cpp/blob/master/doc/ColossalCaveMap.png) of the cave to help me test it. Obviously, it contains spoilers. (I used Flowchart Designer 3 by Guangjian Zhang.)
 
 ---
 
 ### To build and run Adventure
 
-Note that the whole of Adventure is in the one file [advf4_77-03-31.cpp](https://github.com/anthay/Adventure/blob/master/src/advf4_77-03-31.cpp).
+Note that the whole of Adventure is in the one file [advf4_77-03-31.cpp](https://github.com/anthay/advent.cpp/blob/master/src/advf4_77-03-31.cpp).
 
 POSIX (e.g. macOS) (I used Apple clang version 15.0.0 that came with Xcode):
 
