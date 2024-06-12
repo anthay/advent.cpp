@@ -1,4 +1,4 @@
-# Adventure
+# advent.cpp
 
 Will Crowther created Colossal Cave Adventure in 1976 in FORTRAN IV on a PDP-10. This is a faithful recreation in C++. Here are his [code](https://github.com/anthay/Adventure/blob/main/doc/advf4.77-03-31.txt) and [data](https://github.com/anthay/Adventure/blob/main/doc/advdat.77-03-31.txt) files.
 
