@@ -3,7 +3,7 @@
     recoded in non-idiomatic C++ for my own interest -- more literal
     than literate -- as faithful as I could make it.
     Anthony C. Hay, Devon, UK, May 2024
-    https://github.com/anthay/Adventure
+    https://github.com/anthay/advent.cpp
 
     "Colossal Cave Adventure (also known as Adventure or ADVENT) is a
     text-based adventure game, released in 1976 by developer Will Crowther
@@ -2719,7 +2719,7 @@ int main()
         << "     Will Crowther's original 1976 \"Colossal Cave Adventure\"\n"
         << "               A faithful reimplementation in C++\n"
         << "         by Anthony Hay, 2024  (CC0 1.0) Public Domain\n"
-        << "              https://github.com/anthay/Adventure\n"
+        << "              https://github.com/anthay/advent.cpp\n"
         << "-----------------------------------------------------------------\n"
         << "To quit hit Ctrl-C\n\n";
 
